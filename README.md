@@ -1,16 +1,14 @@
 # pi-messenger-bridge
 
-Bridge common messengers (Telegram, WhatsApp, Slack, Discord, Matrix) into pi.
+Bridge Matrix chat into pi.
 
 Remote users can interact with your pi coding agent via their messenger app.
-
-<img width="887" height="656" alt="image" src="https://github.com/user-attachments/assets/d42a41e5-e7d5-420b-be8e-f2191facb190" />
 
 https://github.com/user-attachments/assets/cd64360e-e8cd-4820-a67f-bd127c5d6035
 
 ## Features
 
-- 📱 Multi-messenger support (Telegram, WhatsApp, Slack, Discord, Matrix)
+- 📱 Multi-messenger support (Matrix)
 - 🔐 Challenge-based authentication (6-digit codes)
 - 🎛️ Interactive menu (`/msg-bridge`) for setup and management
 - 🔒 Single-instance guard — prevents duplicate bot polling with sub-agents
@@ -30,66 +28,6 @@ pi install npm:pi-messenger-bridge
 
 ### 2. Configure Transports
 
-#### Telegram
-
-Create a bot via [@BotFather](https://t.me/BotFather) and get your token.
-
-```bash
-/msg-bridge configure telegram <bot-token>
-```
-
-Or set via environment variable:
-```bash
-export PI_TELEGRAM_TOKEN="your-bot-token-here"
-```
-
-#### WhatsApp
-
-Configure WhatsApp (requires QR code scan):
-
-```bash
-/msg-bridge configure whatsapp
-```
-
-Scan the QR code with your WhatsApp mobile app (**Linked Devices → Link a device**).
-
-> **Note:** After linking, **send a message to your own phone number** in WhatsApp to activate the bridge.
-
-Or set custom auth path:
-```bash
-export PI_WHATSAPP_AUTH_PATH="/path/to/whatsapp-auth"
-```
-
-#### Slack
-
-Create a Slack app with Socket Mode enabled. You need both tokens:
-
-```bash
-/msg-bridge configure slack <bot-token> <app-token>
-```
-
-Or set via environment variables:
-```bash
-export PI_SLACK_BOT_TOKEN="xoxb-..."
-export PI_SLACK_APP_TOKEN="xapp-..."
-```
-
-#### Discord
-
-1. Create a new application in the [Developer Portal](https://discord.com/developers/applications)
-2. Go to **Bot** → **Reset Token** → copy the token
-3. Enable **Message Content Intent** (under Privileged Gateway Intents on the same page)
-4. Go to **OAuth2 → URL Generator** → select scope `bot` → select permissions `Send Messages` and `Read Message History` → open the generated URL to invite the bot to your server
-
-```bash
-/msg-bridge configure discord <bot-token>
-```
-
-Or set via environment variable:
-```bash
-export PI_DISCORD_TOKEN="your-bot-token"
-```
-
 #### Matrix
 
 Works with any Matrix homeserver — Element X, Element Web, FluffyChat, etc. The bot auto-joins rooms it's invited to.
@@ -103,6 +41,7 @@ Works with any Matrix homeserver — Element X, Element Web, FluffyChat, etc. Th
 ```
 
 Or set via environment variables:
+
 ```bash
 export PI_MATRIX_HOMESERVER="https://matrix.org"
 export PI_MATRIX_ACCESS_TOKEN="syt_..."
@@ -127,43 +66,44 @@ The user enters the code in the bot chat to become a trusted user.
 
 ## Commands
 
-| Command | Description |
-|---|---|
-| `/msg-bridge` | Open interactive menu (configure, connect, widget, help) |
-| `/msg-bridge status` | Show connection and user status |
-| `/msg-bridge connect` | Connect to all configured transports |
-| `/msg-bridge disconnect` | Disconnect all transports |
-| `/msg-bridge configure <platform> [token]` | Set transport credentials via CLI |
-| `/msg-bridge widget` | Toggle status widget on/off |
-| `/msg-bridge toggletools` | Toggle tool call visibility in remote messages |
-| `/msg-bridge help` | Show command reference |
+| Command                                    | Description                                              |
+| ------------------------------------------ | -------------------------------------------------------- |
+| `/msg-bridge`                              | Open interactive menu (configure, connect, widget, help) |
+| `/msg-bridge status`                       | Show connection and user status                          |
+| `/msg-bridge connect`                      | Connect to all configured transports                     |
+| `/msg-bridge disconnect`                   | Disconnect all transports                                |
+| `/msg-bridge configure <platform> [token]` | Set transport credentials via CLI                        |
+| `/msg-bridge widget`                       | Toggle status widget on/off                              |
+| `/msg-bridge toggletools`                  | Toggle tool call visibility in remote messages           |
+| `/msg-bridge help`                         | Show command reference                                   |
 
 ### Admin commands (in DM with the bot)
 
 Trusted users can DM the bot directly to manage state. Reply with `/help` for the full list:
 
-| Command | Description |
-|---|---|
-| `/help` | Show admin command reference |
-| `/trusted` | List trusted users |
-| `/revoke <userId>` | Revoke trust for a user |
-| `/channels` | List enabled channels |
-| `/enable <chatId> <all\|mentions\|trusted-only>` | Enable a channel |
-| `/disable <chatId>` | Disable a channel |
-| `/toggletools` | Toggle tool call visibility in replies |
+| Command                                          | Description                            |
+| ------------------------------------------------ | -------------------------------------- |
+| `/help`                                          | Show admin command reference           |
+| `/trusted`                                       | List trusted users                     |
+| `/revoke <userId>`                               | Revoke trust for a user                |
+| `/channels`                                      | List enabled channels                  |
+| `/enable <chatId> <all\|mentions\|trusted-only>` | Enable a channel                       |
+| `/disable <chatId>`                              | Disable a channel                      |
+| `/toggletools`                                   | Toggle tool call visibility in replies |
 
 ## Configuration
 
 Config is stored at `~/.pi/msg-bridge.json` with secure permissions (chmod 600).
 
 Example config:
+
 ```json
 {
-  "telegram": { "token": "..." },
-  "whatsapp": { "authPath": "..." },
-  "slack": { "botToken": "...", "appToken": "..." },
-  "discord": { "token": "..." },
-  "matrix": { "homeserverUrl": "https://matrix.org", "accessToken": "syt_...", "encryption": true },
+  "matrix": {
+    "homeserverUrl": "https://matrix.org",
+    "accessToken": "syt_...",
+    "encryption": true
+  },
   "auth": {
     "trustedUsers": ["telegram:123", "whatsapp:456"],
     "adminUserId": "telegram:789"
@@ -178,11 +118,6 @@ Example config:
 
 Environment variables override file config:
 
-- `PI_TELEGRAM_TOKEN` — Telegram bot token
-- `PI_WHATSAPP_AUTH_PATH` — WhatsApp session directory (default: `~/.pi/msg-bridge-whatsapp-auth`)
-- `PI_SLACK_BOT_TOKEN` — Slack bot token (xoxb-...)
-- `PI_SLACK_APP_TOKEN` — Slack app token (xapp-...)
-- `PI_DISCORD_TOKEN` — Discord bot token
 - `PI_MATRIX_HOMESERVER` — Matrix homeserver URL (e.g. `https://matrix.org`)
 - `PI_MATRIX_ACCESS_TOKEN` — Matrix access token
 - `MSG_BRIDGE_DEBUG` — Enable debug logging (true/false)
@@ -207,6 +142,7 @@ Enable debug mode to see detailed logs:
 ```
 
 Or:
+
 ```bash
 export MSG_BRIDGE_DEBUG=true
 ```

@@ -25,10 +25,6 @@
     "pi-package",
     "pi",
     "pi-extension",
-    "telegram",
-    "whatsapp",
-    "slack",
-    "discord",
     "matrix",
     "element",
     "messenger",
@@ -64,18 +60,11 @@
     "@earendil-works/pi-tui": ">=0.74"
   },
   "dependencies": {
-    "@slack/bolt": "^4.6.0",
-    "@whiskeysockets/baileys": "^7.0.0-rc.9",
-    "discord.js": "^14.25.1",
-    "matrix-bot-sdk": "^0.8.0",
-    "node-telegram-bot-api": "^0.67.0",
-    "qrcode-terminal": "^0.12.0"
+    "matrix-bot-sdk": "^0.8.0"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.14",
     "@types/node": "^25.6.2",
-    "@types/node-telegram-bot-api": "^0.64.14",
-    "@types/qrcode-terminal": "^0.12.2",
     "fast-check": "^4.5.3",
     "typescript": "^6.0.3",
     "vitest": "^4.1.5"
